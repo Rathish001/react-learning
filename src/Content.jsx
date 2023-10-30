@@ -1,33 +1,65 @@
 import React from 'react'
+import { useState } from 'react';
+import {FaTrash} from 'react-icons/fa';
 
 const Content = () => {
-    const handleNameChange=()=>{
-        const names=["rathish","rakshitha","John"];
-        const int=Math.floor(Math.random()*3);
-        return names[int];
+    const [items,setItems]=useState([
+      {
+        id:1,
+        checked:true,
+        item:"Item 1"
+      },
+      {
+        id:2,
+        checked:false,
+        item:"Item2"
+      },
+      {
+        id:3,
+        checked:true,
+        item:"item3"
       }
+    ])
+    
+  const handleCheck=(idd)=>{
+    const listItems=items.map((item)=>item.id===idd?{...item,checked:!item.checked}:item)
+    setItems(listItems)
+    localStorage.setItem('Itemlist',JSON.stringify(listItems));
+  }
 
-      const handleClick=()=>{
-        alert("You clicked it")
-      }
-
-      const handleClick2=(name)=>{
-        alert(`${name} was clicked`)
-      }
-      const handleClick3=(e)=>{
-        console.log(e.target)
-      }
+  const handleDelete=(id)=>{
+    const listItems=items.filter((item)=>item.id!==id)
+    setItems(listItems)
+    localStorage.setItem('Itemlist',JSON.stringify(listItems));
+  }
 
   return (
     <main>
-        <p onDoubleClick={handleClick}>Hello {handleNameChange() }</p>
-        <button onClick={handleClick}>Click it</button>
-        <button onClick={()=>handleClick2('Rathish')}>Click it</button>
-        <button onClick={(e)=>handleClick3(e)}>Click it</button>
+      {items.length?(
+      <ul>
+       {items.map((item)=>(
+        <li className='item' key={item.id}>
+          <input type="checkbox" 
+          onChange={()=>handleCheck(item.id)}
+          checked={item.checked} />
+          <label 
+            style={(item.checked)?{textDecoration:"line-through"}:null}
+            onDoubleClick={()=>handleCheck(item.id)}>
+            {item.item}
+          </label>
+          <FaTrash 
+            onClick={()=>handleDelete(item.id)}
+            role='button'/>
+        </li>
 
 
+       ))}
+       </ul>):(
+        <p>Your list is empty</p>
+       )}
     </main>
   )
 }
 
 export default Content
+
